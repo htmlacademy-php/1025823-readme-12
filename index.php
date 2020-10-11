@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 $is_auth = rand(0, 1);
 $user_name = 'Alexander'; // укажите здесь ваше имя
 $cards = [
@@ -47,24 +48,26 @@ $cards = [
     ],
 ];
 
-function trimContent($content, $contentLimit = 300)
+function trimContent(string $content, int $contentLimit = 300): string
 {
+    $content = trim($content);
     if (mb_strlen($content) <= $contentLimit) {
         return $content;
     }
 
-    $trimmedContent = '';
+    $trimmedContentLenchth = 0;
     $contentArray = explode(' ', $content);
+    $trimmedContentArray = [];
 
     foreach ($contentArray as $contentItem) {
-        if (mb_strlen($trimmedContent) < $contentLimit){
-            $trimmedContent .= $contentItem . ' ';
-        } else {
+        if (($trimmedContentLenchth + mb_strlen($contentItem)) >= $contentLimit){
             break;
         }
+        $trimmedContentLenchth += mb_strlen($contentItem) + 1;
+        $trimmedContentArray[] = $contentItem;
     }
 
-    return '<p>' . trim($trimmedContent) . '...</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
+    return '<p>' . implode(' ', $trimmedContentArray) . '...</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
 }
 
 
