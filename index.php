@@ -1,4 +1,5 @@
 <?php
+declare(strict_types = 1);
 $is_auth = rand(0, 1);
 $user_name = 'Alexander'; // укажите здесь ваше имя
 $cards = [
@@ -9,6 +10,13 @@ $cards = [
         'username' => 'Лариса',
         'avatar' => 'userpic-larisa-small.jpg
 ',
+    ],
+    [
+        'title' => 'Очарование гор',
+        'type' => 'post-text',
+        'content' => 'Сложно побывать в горах и в них не влюбиться. Такой вид отдыха очень емкий: всего за неделю можно полностью переключиться, испытать «позитивный стресс», очистить голову и испытать себя. Тот, кто смог взойти на настоящую вершину, будет совсем по-другому смотреть на рабочие неурядицы, работать в группе и подходить к решению задач. Горы приучают к ответственности. При этом, чтобы заняться альпинизмом, каких-то экстраординарных способностей не требуется. Есть два вида восхождений: коммерческие и спортивные. Первые, как правило, не требуют больших усилий: человека почти до вершины подвозят на канатках и ратраках, не нагружают оборудованием и припасами, инструкторы следят за каждым шагом. Спортивное восхождение – другое дело. Здесь уже потребуется выносливость, смекалка и умение работать в команде. Зато и впечатления на порядок сильнее.',
+        'username' => 'Владик',
+        'avatar' => 'userpic.jpg',
     ],
     [
         'title' => 'Игра престолов',
@@ -39,6 +47,30 @@ $cards = [
         'avatar' => 'userpic.jpg',
     ],
 ];
+
+function trimContent(string $content, int $contentLimit = 300): string
+{
+    $content = trim($content);
+    if (mb_strlen($content) <= $contentLimit) {
+        return $content;
+    }
+
+    $trimmedContentLenchth = 0;
+    $contentArray = explode(' ', $content);
+    $trimmedContentArray = [];
+
+    foreach ($contentArray as $contentItem) {
+        if (($trimmedContentLenchth + mb_strlen($contentItem)) >= $contentLimit){
+            break;
+        }
+        $trimmedContentLenchth += mb_strlen($contentItem) + 1;
+        $trimmedContentArray[] = $contentItem;
+    }
+
+    return '<p>' . implode(' ', $trimmedContentArray) . '...</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -239,47 +271,46 @@ $cards = [
             </div>
         </div>
         <div class="popular__posts">
-
-            <?php foreach ( $cards as $card): ?>
-                <article class="popular__post post  <?=$card['type']; ?> ">
+            <?php foreach ($cards as $card): ?>
+                <article class="popular__post post  <?=$card['type'] ?> ">
                     <header class="post__header">
                         <h2><?=$card['title']; ?></h2>
                     </header>
                     <div class="post__main">
                         <!--здесь содержимое карточки-->
-                        <?php if ($card['type'] == 'post-quote'):  ?>
+                        <?php if ($card['type'] === 'post-quote'):  ?>
                             <blockquote>
                                 <p>
-                                    <?=$card['content']; ?>
+                                    <?=trimContent($card['content']) ?>
                                 </p>
                                 <cite>Неизвестный Автор</cite>
                             </blockquote>
-                        <?php elseif ($card['type'] == 'post-text'):  ?>
+                        <?php elseif ($card['type'] === 'post-text'):  ?>
                             <p>
-                                <?=$card['content']; ?>
+                                <?=trimContent($card['content']) ?>
                             </p>
-                        <?php elseif ($card['type'] == 'post-photo'):  ?>
+                        <?php elseif ($card['type'] === 'post-photo'):  ?>
                             <div class="post-photo__image-wrapper">
                                 <img src="img/<?=$card['content']; ?>" alt="Фото от пользователя" width="360" height="240">
                             </div>
-                        <?php elseif ($card['type'] == 'post-link'):  ?>
+                        <?php elseif ($card['type'] === 'post-link'):  ?>
                             <div class="post-link__wrapper">
-                                <a class="post-link__external" href="http://<?=$card['content']; ?>" title="Перейти по ссылке">
+                                <a class="post-link__external" href="http://<?=$card['content'] ?>" title="Перейти по ссылке">
                                     <div class="post-link__info-wrapper">
                                         <div class="post-link__icon-wrapper">
                                             <img src="https://www.google.com/s2/favicons?domain=vitadental.ru" alt="Иконка">
                                         </div>
                                         <div class="post-link__info">
-                                            <h3><?=$card['content']; ?></h3>
+                                            <h3><?=trimContent($card['content'])  ?></h3>
                                         </div>
                                     </div>
-                                    <span><?=$card['content']; ?></span>
+                                    <span><?=trimContent($card['content'])  ?></span>
                                 </a>
                             </div>
-                        <?php elseif ($card['type'] == 'post-video'):  ?>
+                        <?php elseif ($card['type'] === 'post-video'):  ?>
                             <div class="post-video__block">
                                 <div class="post-video__preview">
-                                    <?=embed_youtube_cover($card['content']); ?>
+                                    <?=embed_youtube_cover($card['content']) ?>
                                     <img src="img/coast-medium.jpg" alt="Превью к видео" width="360" height="188">
                                 </div>
                                 <a href="post-details.html" class="post-video__play-big button">
@@ -297,10 +328,10 @@ $cards = [
                             <a class="post__author-link" href="#" title="Автор">
                                 <div class="post__avatar-wrapper">
                                     <!--укажите путь к файлу аватара-->
-                                    <img class="post__author-avatar" src="img/<?=$card['avatar']; ?>" alt="Аватар пользователя">
+                                    <img class="post__author-avatar" src="img/<?=$card['avatar'] ?>" alt="Аватар пользователя">
                                 </div>
                                 <div class="post__info">
-                                    <b class="post__author-name"><?=$card['username']; ?></b>
+                                    <b class="post__author-name"><?=$card['username'] ?></b>
                                     <time class="post__time" datetime="">дата</time>
                                 </div>
                             </a>
