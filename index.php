@@ -80,7 +80,7 @@ function trimContent(string $content, int $contentLimit = 300): string
     return '<p>' . implode(' ', $trimmedContentArray) . '...</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
 }
 
-function getRelativeData(int $index, $postDate)
+function getRelativeData(int $index, $postDate): string
 {
     $currentDate = (new DateTime())->getTimestamp();
     $postDate = (new DateTime($postDate))->getTimestamp();
