@@ -85,7 +85,7 @@
             </div>
         </div>
         <div class="popular__posts">
-            <?php foreach ($cards as $card): ?>
+            <?php foreach ($cards as $index => $card): ?>
                 <article class="popular__post post  <?=$card['type'] ?> ">
                     <header class="post__header">
                         <h2><?=htmlspecialchars($card['title']) ?></h2>
@@ -146,7 +146,10 @@
                                 </div>
                                 <div class="post__info">
                                     <b class="post__author-name"><?=htmlspecialchars($card['username']) ?></b>
-                                    <time class="post__time" datetime="">дата</time>
+                                    <time class="post__time" datetime="<?=$card['created_at'] ?>"
+                                          title="<?=(new DateTime($card['created_at']))->format('d.m.Y H:i')  ?>">
+                                                    <?=getRelativeData($index, $card['created_at']) ?>
+                                    </time>
                                 </div>
                             </a>
                         </div>
