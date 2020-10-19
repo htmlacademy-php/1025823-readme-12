@@ -146,7 +146,10 @@
                                 </div>
                                 <div class="post__info">
                                     <b class="post__author-name"><?=htmlspecialchars($card['username']) ?></b>
-                                    <time class="post__time" datetime="">дата</time>
+                                    <time class="post__time" datetime="<?=$card['created_at'] ?>"
+                                          title="<?=(new DateTime($card['created_at']))->format('d.m.Y H:i')  ?>">
+                                                    <?=getRelativeData($card['created_at']) ?>
+                                    </time>
                                 </div>
                             </a>
                         </div>
