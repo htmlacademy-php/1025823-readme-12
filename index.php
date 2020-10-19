@@ -1,9 +1,10 @@
 <?php
 declare(strict_types = 1);
 require_once 'helpers.php';
+date_default_timezone_set('Europe/Moscow');
+
 $cards = [
     [
-        'card_id' => 1,
         'title' => 'Цитата',
         'type' => 'post-quote',
         'content' => 'Мы в жизни любим только раз, а после ищем лишь похожих',
@@ -80,7 +81,7 @@ function trimContent(string $content, int $contentLimit = 300): string
     return '<p>' . implode(' ', $trimmedContentArray) . '...</p>' . '<a class="post-text__more-link" href="#">Читать далее</a>';
 }
 
-function getRelativeData(int $index, $postDate): string
+function getRelativeData($postDate): string
 {
     $currentDate = (new DateTime())->getTimestamp();
     $postDate = (new DateTime($postDate))->getTimestamp();
@@ -92,23 +93,35 @@ function getRelativeData(int $index, $postDate): string
     $secInMinutes = 60;
     $res = '';
 
-    if ($dateDiff > $secInMonthes) {
-        $monthes = (int) floor($dateDiff / $secInMonthes);
-        $res = $monthes . get_noun_plural_form($monthes, ' месяц', ' месяца', ' месяцев');
-    } else if ($dateDiff > $secInWeeks){
-        $weeks =  (int) floor($dateDiff / $secInWeeks);
-        $res = $weeks . get_noun_plural_form($weeks, ' неделя', ' недели', ' недель');
-    } else if ($dateDiff > $secInDays){
-        $days = (int) floor($dateDiff / $secInDays);
-        $res = $days . get_noun_plural_form($days, ' день', ' дня', ' дней');
-    } else if ($dateDiff > $secInHours) {
-        $hours = (int) floor($dateDiff / $secInHours);
-        $res = $hours . get_noun_plural_form($hours, ' час', ' часа', ' часов');
-    } else if ($dateDiff > $secInMinutes) {
-        $minutes = (int) floor($dateDiff / $secInMinutes);
-        $res = $minutes . get_noun_plural_form($minutes, ' минута', ' минуты', ' минут');
-    } else {
-        $res = $dateDiff . get_noun_plural_form($dateDiff, ' секунда', ' секунды', ' секунд');
+    switch (true) {
+        case ($dateDiff > $secInMonthes):
+            $monthes = (int) floor($dateDiff / $secInMonthes);
+            $res =   $monthes . get_noun_plural_form($monthes, ' месяц', ' месяца', ' месяцев');
+            break;
+
+        case ($dateDiff > $secInWeeks):
+            $weeks =  (int) floor($dateDiff / $secInWeeks);
+            $res =  $weeks . get_noun_plural_form($weeks, ' неделя', ' недели', ' недель');
+            break;
+
+        case  ($dateDiff > $secInDays):
+            $days = (int) floor($dateDiff / $secInDays);
+            $res = $days . get_noun_plural_form($days, ' день', ' дня', ' дней');
+            break;
+
+        case  ($dateDiff > $secInHours):
+            $hours = (int) floor($dateDiff / $secInHours);
+            $res = $hours . get_noun_plural_form($hours, ' час', ' часа', ' часов');
+            break;
+
+        case ($dateDiff > $secInMinutes):
+            $minutes = (int) floor($dateDiff / $secInMinutes);
+            $res = $minutes . get_noun_plural_form($minutes, ' минута', ' минуты', ' минут');
+            break;
+
+        default:
+            $res = $dateDiff . get_noun_plural_form($dateDiff, ' секунда', ' секунды', ' секунд');
+
     }
 
     if (!$res) {
