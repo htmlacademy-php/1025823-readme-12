@@ -34,20 +34,20 @@ CREATE TABLE IF NOT EXISTS posts
     title VARCHAR(128) NOT NULL,
     created_at DATETIME NOT NULL,
     content TEXT,
-    content_type INT,
-    author INT,
+    content_type_id INT NOT NULL,
+    user_id INT NOT NULL,
     image VARCHAR(255),
     video VARCHAR(255),
     site VARCHAR(255),
     num_views INT DEFAULT 0,
 
-    INDEX author_ind (author),
-    FOREIGN KEY (author)
+    INDEX user_id_idx (user_id),
+    FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE,
 
-    INDEX content_type_ind (content_type),
-    FOREIGN KEY (content_type)
+    INDEX content_type_idx (content_type_id),
+    FOREIGN KEY (content_type_id)
         REFERENCES content_types(id)
         ON DELETE RESTRICT
         ON UPDATE CASCADE
@@ -58,13 +58,13 @@ CREATE TABLE IF NOT EXISTS posts_hashtags (
     post_id INT NOT NULL,
     hashtag_id INT NOT NULL,
 
-    INDEX post_id_ind (post_id),
+    INDEX post_id_idx (post_id),
     FOREIGN KEY (post_id)
         REFERENCES posts(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    INDEX hashtag_id_ind (hashtag_id),
+    INDEX hashtag_id_idx (hashtag_id),
     FOREIGN KEY (hashtag_id)
         REFERENCES hashtags(id)
         ON DELETE CASCADE
@@ -75,16 +75,16 @@ CREATE TABLE IF NOT EXISTS comments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     created_at DATETIME NOT NULL,
     content TEXT NOT NULL,
-    author INT NOT NULL,
+    user_id INT NOT NULL,
     post_id INT NOT NULL,
 
-    INDEX author_id_ind (author),
-    FOREIGN KEY (author)
+    INDEX user_id_idx (user_id),
+    FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    INDEX post_id_ind (post_id),
+    INDEX post_id_idx (post_id),
     FOREIGN KEY (post_id)
         REFERENCES posts(id)
         ON DELETE CASCADE
@@ -96,13 +96,15 @@ CREATE TABLE IF NOT EXISTS likes (
     user_id INT NOT NULL,
     post_id INT NOT NULL,
 
-    INDEX user_id_ind (user_id),
+    UNIQUE KEY `uidx_post_user` (user_id, post_id),
+
+    INDEX user_id_idx (user_id),
     FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    INDEX post_id_ind (post_id),
+    INDEX post_id_idx (post_id),
     FOREIGN KEY (post_id)
         REFERENCES posts(id)
         ON DELETE CASCADE
@@ -112,16 +114,16 @@ CREATE TABLE IF NOT EXISTS likes (
 CREATE TABLE IF NOT EXISTS subscriptions (
     id INT AUTO_INCREMENT PRIMARY KEY,
     subscriber INT NOT NULL,
-    author INT NOT NULL,
+    user_id INT NOT NULL,
 
-    INDEX subscriber_ind (subscriber),
+    INDEX subscriber_idx (subscriber),
     FOREIGN KEY (subscriber)
         REFERENCES users(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
 
-    INDEX author_id_ind (author),
-    FOREIGN KEY (author)
+    INDEX user_id_idx (user_id),
+    FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
@@ -131,11 +133,11 @@ CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     created_at DATETIME NOT NULL,
     content TEXT NOT NULL,
-    sender INT NOT NULL,
+    user_id INT NOT NULL,
     recipient INT NOT NULL,
 
-    INDEX sender_ind (sender),
-    FOREIGN KEY (sender)
+    INDEX sender_idx (user_id),
+    FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
